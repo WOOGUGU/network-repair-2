@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.networkrepair2.mapper.WorkOrderListMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.networkrepair2.pojo.WorkOrderList">
+            <id property="workOrderNumber" column="work_order_number" jdbcType="BIGINT"/>
+            <result property="workOrderState" column="work_order_state" jdbcType="INTEGER"/>
+            <result property="fkStudentNumber" column="FK_student_number" jdbcType="BIGINT"/>
+            <result property="workOrderTime" column="work_order_time" jdbcType="TIMESTAMP"/>
+            <result property="phoneNumber" column="phone_number" jdbcType="BIGINT"/>
+            <result property="repairAddress" column="repair_address" jdbcType="VARCHAR"/>
+            <result property="repairContent" column="repair_content" jdbcType="VARCHAR"/>
+            <result property="pictureAddress" column="picture_address" jdbcType="VARCHAR"/>
+            <result property="repairTime" column="repair_time" jdbcType="VARCHAR"/>
+            <result property="fkAdministratorNumber" column="FK_administrator_number" jdbcType="BIGINT"/>
+            <result property="administratorContent" column="administrator_content" jdbcType="VARCHAR"/>
+            <result property="administratorTime" column="administrator_time" jdbcType="TIMESTAMP"/>
+            <result property="fkRepairmanNumber" column="FK_repairman_number" jdbcType="BIGINT"/>
+            <result property="repairmanContent" column="repairman_content" jdbcType="VARCHAR"/>
+            <result property="repairmanTime" column="repairman_time" jdbcType="TIMESTAMP"/>
+            <result property="evaluationState" column="evaluation_state" jdbcType="FLOAT"/>
+            <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
+            <result property="evaluationTime" column="evaluation_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        work_order_number,work_order_state,FK_student_number,
+        work_order_time,phone_number,repair_address,
+        repair_content,picture_address,repair_time,
+        FK_administrator_number,administrator_content,administrator_time,
+        FK_repairman_number,repairman_content,repairman_time,
+        evaluation_state,evaluation,evaluation_time
+    </sql>
+</mapper>

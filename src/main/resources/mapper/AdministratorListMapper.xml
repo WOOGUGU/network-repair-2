@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.networkrepair2.mapper.AdministratorListMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.networkrepair2.pojo.AdministratorList">
+            <id property="administratorNumber" column="administrator_number" jdbcType="BIGINT"/>
+            <result property="administratorName" column="administrator_name" jdbcType="VARCHAR"/>
+            <result property="administratorPassword" column="administrator_password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        administrator_number,administrator_name,administrator_password
+    </sql>
+    <select id="selectAllByAdministratorNumber" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from administrator_list
+        where
+        administrator_number = #{administratorNumber,jdbcType=NUMERIC}
+    </select>
+</mapper>

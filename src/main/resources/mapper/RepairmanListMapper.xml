@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.networkrepair2.mapper.RepairmanListMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.networkrepair2.pojo.RepairmanList">
+            <id property="repairmanNumber" column="repairman_number" jdbcType="BIGINT"/>
+            <result property="repairmanName" column="repairman_name" jdbcType="VARCHAR"/>
+            <result property="repairmanPassword" column="repairman_password" jdbcType="VARCHAR"/>
+            <result property="repairmanSex" column="repairman_sex" jdbcType="CHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        repairman_number,repairman_name,repairman_password,
+        repairman_sex
+    </sql>
+</mapper>
