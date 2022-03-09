@@ -26,28 +26,26 @@ public class StudentController {
     WorkOrderListServiceImpl workOrderListService;
 
 
-
-
     //登录
     @PostMapping("/login/student")
     public Object login(
             @RequestParam Long student_number,
             @RequestParam String passport
-    ){
-        if(student_number==null || passport.equals("")){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","用户名或者密码为空");
+    ) {
+        if (student_number == null || passport.equals("")) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "用户名或者密码为空");
         }
 
         QueryWrapper<StudentNumber> queryWrapper = new QueryWrapper<>();
         queryWrapper
-                .eq("student_number",student_number)
-                .eq("student_password",passport);
+                .eq("student_number", student_number)
+                .eq("student_password", passport);
         StudentNumber studentNumber = studentNumberServiceImpl.getOne(queryWrapper);
-        if(studentNumber==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","用户不存在");
-        }else {
+        if (studentNumber == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "用户不存在");
+        } else {
             studentNumber.setStudentPassword(null);
-            return ResultCode.getJson(studentNumber,"用户存在");
+            return ResultCode.getJson(studentNumber, "用户存在");
         }
     }
 
@@ -60,9 +58,9 @@ public class StudentController {
             @RequestParam String address,
             @RequestParam String picture_address,
             @RequestParam(required = false) String fixed_time
-    ){
-        if(student_number==null || contact_information==null || workorder_content==null|| address==null || fixed_time==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","缺少必要参数");
+    ) {
+        if (student_number == null || contact_information == null || workorder_content == null || address == null || fixed_time == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
         WorkOrderList workOrderList = new WorkOrderList();
         workOrderList.setFkStudentNumber(student_number);
@@ -71,10 +69,10 @@ public class StudentController {
         workOrderList.setPictureAddress(picture_address);
         workOrderList.setRepairTime(fixed_time);
         workOrderList.setWorkOrderState(1);
-        if (workOrderListService.save(workOrderList)){
+        if (workOrderListService.save(workOrderList)) {
             return ResultCode.getJson("1");
-        }else {
-            return ResultCode.getJson(ResponseCode.INTERNAL_SERVER_ERROR.value,"0","添加失败");
+        } else {
+            return ResultCode.getJson(ResponseCode.INTERNAL_SERVER_ERROR.value, "0", "添加失败");
         }
 
 
@@ -83,24 +81,24 @@ public class StudentController {
     //学生查看工单列表
     @PostMapping("/student/orderlist")
     public Object studentOrderList(
-        @RequestParam Long student_number
-    ){
-        if(student_number==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","学号为空！请重新访问");
+            @RequestParam Long student_number
+    ) {
+        if (student_number == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "学号为空！请重新访问");
         }
         QueryWrapper<WorkOrderList> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("FK_student_number",student_number).orderByDesc("work_order_number");
+        queryWrapper.eq("FK_student_number", student_number).orderByDesc("work_order_number");
         return ResultCode.getJson(workOrderListService.list(queryWrapper));
 
     }
 
     //查看某工单
     @PostMapping("/student/getorder")
-    public  Object getOrder(
-        @RequestParam Long workorder_number
-    ){
-        if(workorder_number==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","工单号为空");
+    public Object getOrder(
+            @RequestParam Long workorder_number
+    ) {
+        if (workorder_number == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "工单号为空");
         }
 
         //直接返回的实体类
@@ -114,19 +112,19 @@ public class StudentController {
             @RequestParam Long workorder_number,
             @RequestParam Double maintenance_satisfaction,
             @RequestParam String evaluation
-    ){
-        if(student_number==null || workorder_number==null || maintenance_satisfaction==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","缺少必要参数");
+    ) {
+        if (student_number == null || workorder_number == null || maintenance_satisfaction == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
-        WorkOrderList workOrderList=workOrderListService.selectByWorkOrderNumber(workorder_number);
-        if(workOrderList.getFkStudentNumber().equals(student_number)&& workOrderList.getWorkOrderState()==3){
+        WorkOrderList workOrderList = workOrderListService.selectByWorkOrderNumber(workorder_number);
+        if (workOrderList.getFkStudentNumber().equals(student_number) && workOrderList.getWorkOrderState() == 3) {
             workOrderList.setEvaluation(evaluation);
             workOrderList.setEvaluationState(maintenance_satisfaction);
             workOrderList.setWorkOrderState(4);
             workOrderList.setEvaluationTime(LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))));
             workOrderListService.updateById(workOrderList);
             return ResultCode.getJson("1");
-        }else {
+        } else {
             //应该分别return
             return ResultCode.getJson(ResponseCode.FAIL.value, "0", "用户非法或当前阶段无法评价");
         }
@@ -137,9 +135,9 @@ public class StudentController {
 
     public Object getLatestOrder(
             @RequestParam Long student_number
-    ){
-        if(student_number==null){
-            return ResultCode.getJson(ResponseCode.ParamLost.value,"0","缺少必要参数");
+    ) {
+        if (student_number == null) {
+            return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
         return ResultCode.getJson(workOrderListService.getLastOne(student_number));
     }
