@@ -25,4 +25,8 @@ mybatis-plus:
       logic-not-delete-value: 0
   mapper-locations: classpath:mapper/*.xml
 
-
+# jwt配置
+jwt:
+  config:
+    key: userlogin
+    failureTime: 3600000
