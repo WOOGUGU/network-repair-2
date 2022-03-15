@@ -28,5 +28,5 @@ mybatis-plus:
 # jwt配置
 jwt:
   config:
-    key: userlogin
+    key: ahhhhhhnicaibuzhao
     failureTime: 3600000

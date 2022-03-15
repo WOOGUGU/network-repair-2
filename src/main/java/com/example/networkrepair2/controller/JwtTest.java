@@ -58,12 +58,11 @@ public class JwtTest {
         }
     }
 
-
     /**
      * 从请求头信息中获取token数据
-     *   <p>1.获取请求头信息：名称=Authorization(前后端约定)
-     *   <p>2.解析token
-     *   <p>3.获取clamis
+     * <p>1.获取请求头信息：名称=Authorization(前后端约定)
+     * <p>2.解析token
+     * <p>3.获取clamis
      */
     @PostMapping("/jwt/profile")
     public Object profile(
@@ -77,8 +76,12 @@ public class JwtTest {
         Claims claims = jwtUtils.parseJwt(authorization);
         //3.获取clamis
         String userId = claims.getId();
-        System.out.println(userId);
+        String userName = claims.getSubject();
+        AdministratorList administratorList = new AdministratorList();
+        administratorList.setAdministratorNumber(Long.valueOf(String.valueOf(claims.get("AdministratorNumber"))));
+        administratorList.setAdministratorName(String.valueOf(claims.get("AdministratorName")));
 
-        return ResultCode.getJson(claims);
+
+        return ResultCode.getJson(administratorList);
     }
 }

@@ -39,7 +39,9 @@ public class JwtUtils {
         long exp = now + failureTime;
 
         //2、创建JwtBuilder
-        JwtBuilder jwtBuilder = Jwts.builder().setId(id).setSubject(subject)
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .setId(id)
+                .setSubject(subject)
                 .setIssuedAt(new Date())
                 //设置签名防止篡改
                 .signWith(SignatureAlgorithm.HS256, key);
@@ -63,5 +65,4 @@ public class JwtUtils {
     public Claims parseJwt(String token) {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
     }
-
 }
