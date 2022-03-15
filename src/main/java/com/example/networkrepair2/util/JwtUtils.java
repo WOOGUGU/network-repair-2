@@ -19,9 +19,13 @@ import java.util.Map;
 @Configuration
 @ConfigurationProperties("jwt.config")
 public class JwtUtils {
-    //签名私钥
+    /**
+     * 签名私钥
+     */
     private String key;
-    //签名失效时间
+    /**
+     * 签名失效时间
+     */
     private Long failureTime;
 
     /**
@@ -65,4 +69,5 @@ public class JwtUtils {
     public Claims parseJwt(String token) {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
     }
+
 }

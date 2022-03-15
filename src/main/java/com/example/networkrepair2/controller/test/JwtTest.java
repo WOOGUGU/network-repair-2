@@ -1,4 +1,4 @@
-package com.example.networkrepair2.controller;
+package com.example.networkrepair2.controller.test;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.networkrepair2.pojo.AdministratorList;
@@ -36,6 +36,7 @@ public class JwtTest {
             @RequestParam(value = "password") String password
     ) {
         if (jobNumber == null || "".equals(password)) {
+            // 参数丢失
             return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
 

@@ -7,51 +7,62 @@ import com.example.networkrepair2.pojo.WorkOrderList;
 import com.example.networkrepair2.service.impl.AdministratorListServiceImpl;
 import com.example.networkrepair2.service.impl.RepairmanListServiceImpl;
 import com.example.networkrepair2.service.impl.WorkOrderListServiceImpl;
+import com.example.networkrepair2.util.JwtUtils;
 import com.example.networkrepair2.util.ResponseCode;
 import com.example.networkrepair2.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
 public class AdministerController {
-
-    @Autowired(required = false)
-    AdministratorList administratorList;
-
-    @Autowired(required = false)
+    @Autowired
     AdministratorListServiceImpl administratorListService;
-
-    @Autowired(required = false)
+    @Autowired
     WorkOrderListServiceImpl workOrderListService;
-
-    @Autowired(required = false)
+    @Autowired
     RepairmanListServiceImpl repairmanListService;
+    @Autowired
+    JwtUtils jwtUtils;
 
-    @Autowired(required = false)
-
-    //登入
-    @PostMapping("/login/administer")
+    /**
+     * @param administratorNumber   管理员账号
+     * @param administratorPassword 管理员密码（明文）
+     * @return token，基本信息
+     */
+    @PostMapping("/login/administrator")
     public Object login(
-            @RequestParam(value = "jobNumber") Long jobNumber,
-            @RequestParam(value = "password") String password
+            @RequestParam(value = "administratorNumber") Long administratorNumber,
+            @RequestParam(value = "administratorPassword") String administratorPassword
     ) {
-        if (jobNumber == null || "".equals(password)) {
+        if (administratorNumber == null || "".equals(administratorPassword)) {
             return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
-
-        AdministratorList administratorList = administratorListService.getBYId(jobNumber);
+        AdministratorList administratorList = administratorListService.getBYId(administratorNumber);
         if (administratorList == null) {
             return ResultCode.getJson(ResponseCode.IndexLost.value, "0", "用户不存在");
-        } else if (!administratorList.getAdministratorPassword().equals(password)) {
+        } else if (!administratorList.getAdministratorPassword().equals(administratorPassword)) {
             return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "密码错误");
         } else {
-            administratorList.setAdministratorPassword(null);
-            return ResultCode.getJson(administratorList, "登陆成功");
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("AdministratorNumber", administratorList.getAdministratorNumber());
+            dataMap.put("AdministratorName", administratorList.getAdministratorName());
+            String token = jwtUtils.createJwt(
+                    administratorList.getAdministratorNumber().toString(),
+                    administratorList.getAdministratorName(),
+                    dataMap
+            );
+            dataMap.put("Token",token);
+            return ResultCode.getJson(dataMap, "登陆成功");
         }
     }
 
