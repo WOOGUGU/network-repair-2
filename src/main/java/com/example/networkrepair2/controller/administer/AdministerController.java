@@ -32,6 +32,7 @@ public class AdministerController {
     @Autowired(required = false)
     RepairmanListServiceImpl repairmanListService;
 
+    @Autowired(required = false)
 
     //登入
     @PostMapping("/login/administer")
