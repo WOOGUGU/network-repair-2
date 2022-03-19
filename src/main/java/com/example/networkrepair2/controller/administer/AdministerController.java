@@ -1,15 +1,16 @@
 package com.example.networkrepair2.controller.administer;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.networkrepair2.anno.NoNeedLogin;
 import com.example.networkrepair2.pojo.AdministratorList;
 import com.example.networkrepair2.pojo.RepairmanList;
 import com.example.networkrepair2.pojo.WorkOrderList;
 import com.example.networkrepair2.service.impl.AdministratorListServiceImpl;
 import com.example.networkrepair2.service.impl.RepairmanListServiceImpl;
 import com.example.networkrepair2.service.impl.WorkOrderListServiceImpl;
-import com.example.networkrepair2.util.JwtUtils;
 import com.example.networkrepair2.util.ResponseCode;
 import com.example.networkrepair2.util.ResultCode;
+import com.example.networkrepair2.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,22 +32,23 @@ public class AdministerController {
     WorkOrderListServiceImpl workOrderListService;
     @Autowired
     RepairmanListServiceImpl repairmanListService;
-    @Autowired
-    JwtUtils jwtUtils;
 
     /**
      * @param administratorNumber   管理员账号
      * @param administratorPassword 管理员密码（明文）
      * @return token，基本信息
      */
+    @NoNeedLogin
     @PostMapping("/login/administrator")
     public Object login(
             @RequestParam(value = "administratorNumber") Long administratorNumber,
             @RequestParam(value = "administratorPassword") String administratorPassword
     ) {
         if (administratorNumber == null || "".equals(administratorPassword)) {
+            // 参数丢失
             return ResultCode.getJson(ResponseCode.ParamLost.value, "0", "缺少必要参数");
         }
+
         AdministratorList administratorList = administratorListService.getBYId(administratorNumber);
         if (administratorList == null) {
             return ResultCode.getJson(ResponseCode.IndexLost.value, "0", "用户不存在");
@@ -56,12 +58,7 @@ public class AdministerController {
             Map<String, Object> dataMap = new HashMap<>();
             dataMap.put("AdministratorNumber", administratorList.getAdministratorNumber());
             dataMap.put("AdministratorName", administratorList.getAdministratorName());
-            String token = jwtUtils.createJwt(
-                    administratorList.getAdministratorNumber().toString(),
-                    administratorList.getAdministratorName(),
-                    dataMap
-            );
-            dataMap.put("Token",token);
+            dataMap.put("Token", TokenUtil.createJwtToken(administratorNumber.toString(), administratorList.getAdministratorName()));
             return ResultCode.getJson(dataMap, "登陆成功");
         }
     }

@@ -25,9 +25,3 @@ mybatis-plus:
       logic-not-delete-value: 0
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.example.networkrepair2.pojo
-
-# jwt配置
-jwt:
-  config:
-    key: ahhhhhhnicaibuzhao
-    failureTime: 3600000

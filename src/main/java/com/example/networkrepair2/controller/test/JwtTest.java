@@ -1,11 +1,13 @@
 package com.example.networkrepair2.controller.test;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.example.networkrepair2.anno.NoNeedLogin;
 import com.example.networkrepair2.pojo.AdministratorList;
 import com.example.networkrepair2.service.AdministratorListService;
 import com.example.networkrepair2.util.JwtUtils;
 import com.example.networkrepair2.util.ResponseCode;
 import com.example.networkrepair2.util.ResultCode;
+import com.example.networkrepair2.util.TokenUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +25,18 @@ import java.util.Map;
 @RestController
 public class JwtTest {
     @Autowired
-    JwtUtils jwtUtils;
-    @Autowired
     AdministratorListService administratorListService;
 
     /**
-     * 生成jwt信息
+     * 生成Token-新
+     *
+     * @param jobNumber 用户工号
+     * @param password  密码
+     * @return 基本信息+Token
      */
-    @PostMapping("/jwt/login")
-    public Object login(
+    @NoNeedLogin
+    @PostMapping("/createJwtToken")
+    public Object createJwtToken(
             @RequestParam(value = "jobNumber") Long jobNumber,
             @RequestParam(value = "password") String password
     ) {
@@ -49,40 +54,23 @@ public class JwtTest {
             Map<String, Object> dataMap = new HashMap<>();
             dataMap.put("AdministratorNumber", administratorList.getAdministratorNumber());
             dataMap.put("AdministratorName", administratorList.getAdministratorName());
-            //生成token并存入数据返回
-            String token = jwtUtils.createJwt(
-                    administratorList.getAdministratorNumber().toString(),
-                    administratorList.getAdministratorName(),
-                    dataMap
-            );
-            return ResultCode.getJson(token, "登陆成功");
+            dataMap.put("Token", TokenUtil.createJwtToken(jobNumber.toString(), administratorList.getAdministratorName()));
+            return ResultCode.getJson(dataMap, "登陆成功");
         }
     }
 
-    /**
-     * 从请求头信息中获取token数据
-     * <p>1.获取请求头信息：名称=Authorization(前后端约定)
-     * <p>2.解析token
-     * <p>3.获取clamis
-     */
-    @PostMapping("/jwt/profile")
-    public Object profile(
+    @PostMapping("/parseJwt")
+    public Object parseJwt(
             @RequestHeader("Authorization") String authorization
     ) {
         if (StringUtils.isEmpty(authorization)) {
-            //系统未捕捉到请求头信息
             return ResultCode.getJson("错误！，无请求头");
         }
-        //2.解析token
-        Claims claims = jwtUtils.parseJwt(authorization);
-        //3.获取clamis
-        String userId = claims.getId();
-        String userName = claims.getSubject();
-        AdministratorList administratorList = new AdministratorList();
-        administratorList.setAdministratorNumber(Long.valueOf(String.valueOf(claims.get("AdministratorNumber"))));
-        administratorList.setAdministratorName(String.valueOf(claims.get("AdministratorName")));
-
-
-        return ResultCode.getJson(administratorList);
+        //解析token
+        Claims claims = TokenUtil.parseJwt(authorization);
+        System.out.println(claims.getId());
+        System.out.println(claims.getSubject());
+        System.out.println(claims.getIssuer());
+        return ResultCode.getJson(claims, "解析Token成功");
     }
 }
