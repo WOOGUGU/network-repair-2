@@ -3,6 +3,7 @@ package com.example.networkrepair2.interceptor;
 import com.example.networkrepair2.anno.NoNeedLogin;
 import com.example.networkrepair2.util.TokenUtil;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -11,13 +12,12 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author WOOGUGU
+ */
+@Slf4j
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
-
-//    @Autowired
-//    private FangDongService fangDongService;
-//    @Autowired
-//    private ZuKeService zuKeService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -25,25 +25,25 @@ public class LoginInterceptor implements HandlerInterceptor {
         //是不是映射到方法上
         boolean isHandlerMethod = handler instanceof HandlerMethod;
         if (!isHandlerMethod) {
-            System.out.println("不是方法上");
+            log.warn("不是方法上");
             return true;
         }
         //不需要登录的注解
         boolean isNoNeedLogin = ((HandlerMethod) handler).getMethodAnnotation(NoNeedLogin.class) != null;
         if (isNoNeedLogin) {
-            System.out.println("无需登录");
+            log.warn("无需登录");
             return true;
         }
         //需要登录验证
         String token = request.getHeader("Authorization");
         if (token == null) {
-            System.out.println("无token");
+            log.error("无token");
         } else {
             Claims claims = null;
             try {
                 claims = TokenUtil.parseJwt(token);
             } catch (Exception e) {
-                System.out.println("token有误");
+                log.error("token有误");
             }
             if (claims != null) {
                 return true;

@@ -31,7 +31,7 @@ public class TokenUtil {
     /**
      * 签发时间
      */
-    public static final Integer TTLMILLIS = 360000;
+    public static final Integer TTLMILLIS = 2 * 60 * 60 * 1000;
 
 
     /**
@@ -45,8 +45,7 @@ public class TokenUtil {
     }
 
     /**
-     *
-     * @param id userNumber
+     * @param id      userNumber
      * @param subject userName
      * @return token String
      */
